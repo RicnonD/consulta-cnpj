@@ -36,18 +36,24 @@
 
   <script>
     async function consultar() {
-      const cnpj = document.getElementById('cnpj').value;
+      const input = document.getElementById('cnpj').value;
       const resultado = document.getElementById('resultado');
 
-      if (!cnpj) {
+      if (!input) {
         resultado.innerHTML = 'Por favor, digite um CNPJ.';
         return;
       }
 
+      // Remove caracteres não numéricos do CNPJ
+      const cnpj = input.replace(/[^\d]/g, '');
+
+      // Reinsere a máscara do CNPJ formatado (opcional)
+      const cnpjFormatado = cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
+
       resultado.innerHTML = 'Consultando...';
 
       try {
-        const response = await fetch(`https://ricardopaula.app.n8n.cloud/webhook-test/pesquisar-cnpj?cnpj=${encodeURIComponent(cnpj)}`);
+        const response = await fetch(`https://ricardopaula.app.n8n.cloud/webhook/pesquisar-cnpj?cnpj=${encodeURIComponent(cnpjFormatado)}`);
         const data = await response.json();
 
         if (data.razao_social) {
